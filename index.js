@@ -5,12 +5,11 @@ const noop = function(){};
 (function(Exporter) {
 
   Exporter.setup = function(_, callback) {
-    Exporter.log('setup');
 
-    Exporter.posts = JSON.parse(fs.readFileSync('/var/nbb/input/postData.json', 'utf8'));
-    Exporter.categories = JSON.parse(fs.readFileSync('/var/nbb/input/categoryData.json', 'utf8'));
-    Exporter.threads = JSON.parse(fs.readFileSync('/var/nbb/input/threadData.json', 'utf8'));
-    Exporter.users = JSON.parse(fs.readFileSync('/var/nbb/input/memberData.json', 'utf8'));
+    Exporter.posts = require('./input/postData.json');
+    Exporter.categories = require('./input/categoryData.json');
+    Exporter.threads = require('./input/threadData.json');
+    Exporter.users = require('./input/memberData.json');
 
     callback(null, Exporter.config());
   };
@@ -140,7 +139,7 @@ const noop = function(){};
     return Exporter._config;
   };
 
-  Exports.isFunction = function(functionToCheck) {
+  Exporter.isFunction = function(functionToCheck) {
     return functionToCheck && {}.toString.call(functionToCheck) === '[object Function]';
   }
 
