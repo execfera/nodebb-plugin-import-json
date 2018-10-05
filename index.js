@@ -1,4 +1,5 @@
 const async = require('async');
+const fs = require('fs');
 const noop = function(){};
 
 (function(Exporter) {
@@ -6,10 +7,10 @@ const noop = function(){};
   Exporter.setup = function(_, callback) {
     Exporter.log('setup');
 
-    Exporter.posts = require('./input/postData.json');
-    Exporter.categories = require('./input/categoryData.json');
-    Exporter.threads = require('./input/threadData.json');
-    Exporter.users = require('./input/memberData.json');
+    Exporter.posts = JSON.parse(fs.readFileSync('/var/nbb/input/postData.json', 'utf8'));
+    Exporter.categories = JSON.parse(fs.readFileSync('/var/nbb/input/categoryData.json', 'utf8'));
+    Exporter.threads = JSON.parse(fs.readFileSync('/var/nbb/input/threadData.json', 'utf8'));
+    Exporter.users = JSON.parse(fs.readFileSync('/var/nbb/input/memberData.json', 'utf8'));
 
     callback(null, Exporter.config());
   };
