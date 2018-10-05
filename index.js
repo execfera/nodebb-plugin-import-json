@@ -1,11 +1,10 @@
 const async = require('async');
 const fs = require('fs');
 const noop = function(){};
-const logPrefix = '[nodebb-plugin-import-json]';
 
 (function(Exporter) {
 
-  Exporter.setup = function(config, callback) {
+  Exporter.setup = function(_, callback) {
     Exporter.log('setup');
 
     Exporter.posts = fs.readFileSync('./input/postData.json', 'utf8');
@@ -20,7 +19,7 @@ const logPrefix = '[nodebb-plugin-import-json]';
     return Exporter.getPaginatedUsers(0, -1, callback);
   };
   Exporter.getPaginatedUsers = function(start, limit, callback) {
-    callback = !_.isFunction(callback) ? noop : callback;
+    callback = !Exporter.isFunction(callback) ? noop : callback;
 
     const map = Exporter.users
       .slice(start, start + limit)
@@ -35,7 +34,7 @@ const logPrefix = '[nodebb-plugin-import-json]';
     return Exporter.getPaginatedCategories(0, -1, callback);  
   };
   Exporter.getPaginatedCategories = function(start, limit, callback) {
-    callback = !_.isFunction(callback) ? noop : callback;
+    callback = !Exporter.isFunction(callback) ? noop : callback;
 
     const map = Exporter.categories
       .slice(start, start + limit)
@@ -50,7 +49,7 @@ const logPrefix = '[nodebb-plugin-import-json]';
     return Exporter.getPaginatedTopics(0, -1, callback);
   };
   Exporter.getPaginatedTopics = function(start, limit, callback) {
-    callback = !_.isFunction(callback) ? noop : callback;
+    callback = !Exporter.isFunction(callback) ? noop : callback;
 
     const map = Exporter.threads
       .slice(start, start + limit)
@@ -65,7 +64,7 @@ const logPrefix = '[nodebb-plugin-import-json]';
     return Exporter.getPaginatedPosts(0, -1, callback);
   };
   Exporter.getPaginatedPosts = function(start, limit, callback) {
-    callback = !_.isFunction(callback) ? noop : callback;
+    callback = !Exporter.isFunction(callback) ? noop : callback;
 
     const map = Exporter.posts
       .slice(start, start + limit)
@@ -77,9 +76,6 @@ const logPrefix = '[nodebb-plugin-import-json]';
   };
 
   Exporter.teardown = function(callback) {
-    Exporter.log('teardown');
-
-    Exporter.log('Done');
     callback();
   };
 
@@ -129,24 +125,6 @@ const logPrefix = '[nodebb-plugin-import-json]';
     ], callback);
   };
 
-  Exporter.warn = function() {
-    const args = _.toArray(arguments);
-    args.unshift(logPrefix);
-    console.warn.apply(console, args);
-  };
-
-  Exporter.log = function() {
-    const args = _.toArray(arguments);
-    args.unshift(logPrefix);
-    console.log.apply(console, args);
-  };
-
-  Exporter.error = function() {
-    const args = _.toArray(arguments);
-    args.unshift(logPrefix);
-    console.error.apply(console, args);
-  };
-
   Exporter.config = function(config, val) {
     if (config != null) {
       if (typeof config === 'object') {
@@ -162,24 +140,8 @@ const logPrefix = '[nodebb-plugin-import-json]';
     return Exporter._config;
   };
 
-  // from Angular https://github.com/angular/angular.js/blob/master/src/ng/directive/input.js#L11
-  Exporter.validateUrl = function(url) {
-    const pattern = /^(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?$/;
-    return url && url.length < 2083 && url.match(pattern) ? url : '';
-  };
-
-  Exporter.truncateStr = function(str, len) {
-    if (typeof str != 'string') return str;
-    len = _.isNumber(len) && len > 3 ? len : 20;
-    return str.length <= len ? str : str.substr(0, len - 3) + '...';
-  };
-
-  Exporter.whichIsFalsy = function(arr) {
-    for (const i = 0; i < arr.length; i++) {
-      if (!arr[i])
-        return i;
-    }
-    return null;
-  };
+  Exports.isFunction = function(functionToCheck) {
+    return functionToCheck && {}.toString.call(functionToCheck) === '[object Function]';
+  }
 
 })(module.exports);
